@@ -32,7 +32,6 @@
       </div>
     </div>
     <div class="icon"></div>
-    <audio :src="src" ref="audio"></audio>
   </div>
 </template>
 <script>
@@ -46,34 +45,36 @@ export default {
       singer: '',
       duration: '',
       width: 0,
-      src: '',
+      audio: '',
     };
   },
   mounted() {
     this.receive();
+    this.audio = document.getElementsByClassName('player')[0];
   },
   methods: {
     play() {
-      this.isShow = !this.isShow;
-      if (this.isShow === true) {
-        this.$refs.audio.pause();
-      }
       if (this.isShow === false) {
-        this.$refs.audio.play();
+        this.isShow = true;
+        this.audio.pause();
+      } else {
+        this.isShow = false;
+        this.audio.play();
       }
     },
     prev() {},
     next() {},
     show() {},
     receive() {
-      this.$bus.$on('send', (obj, currentTime, srcStr, val) => {
+      this.$bus.$on('startPlay', (obj, v) => {
+        this.isShow = v;
         this.name = obj.name;
         this.url = obj.artists[0].img1v1Url;
         this.singer = obj.artists[0].name;
         this.duration = obj.duration;
+      });
+      this.$bus.$on('send', (currentTime) => {
         this.current = this.timeChange(currentTime);
-        this.src = srcStr;
-        this.isShow = val;
         let per = Math.floor((currentTime / this.convert(this.duration)) * 100);
         this.width = per;
       });

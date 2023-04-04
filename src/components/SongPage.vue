@@ -16,7 +16,7 @@
         <div class="time">{{ item.duration }}</div>
       </li>
     </ul>
-    <audio :src="src" ref="audio" @timeupdate="time"></audio>
+    <audio :src="src" ref="audio" @timeupdate="time" class="player"></audio>
   </div>
 </template>
 <script>
@@ -28,7 +28,7 @@ export default {
       songId: null,
       src: '',
       currentTime: '',
-      isShow: false,
+      isPlay: false,
       item: null,
     };
   },
@@ -40,8 +40,8 @@ export default {
         .then((res) => {
           this.src = res.data.data[0].url;
           this.$refs.audio.onloadedmetadata = () => {
+            this.$bus.$emit('startPlay', this.item, false);
             this.$refs.audio.play();
-            this.time();
           };
         })
         .catch((error) => {
@@ -50,13 +50,7 @@ export default {
     },
     time() {
       this.currentTime = Math.floor(this.$refs.audio.currentTime);
-      this.$bus.$emit(
-        'send',
-        this.item,
-        this.currentTime,
-        this.src,
-        this.isShow
-      );
+      this.$bus.$emit('send', this.currentTime);
     },
   },
 };
