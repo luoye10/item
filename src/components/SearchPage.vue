@@ -1,26 +1,33 @@
 <template>
   <div class="container">
     <div class="head">
-      <div class="box">
+      <div class="search">
         <el-input
           v-model="word"
-          placeholder="大家都在搜 林俊杰"
+          size="mini"
+          prefix-icon="el-icon-search"
           @keyup.enter.native="startSearch"
         >
         </el-input>
-        <el-button @click="startSearch">搜索</el-button>
+        <el-button @click="startSearch" type="primary" round size="mini"
+          >搜索</el-button
+        >
       </div>
     </div>
     <song-page :songs="songs" v-show="isShow"></song-page>
+    <play-page></play-page>
   </div>
 </template>
 
 <script>
 import { search } from '../api/index';
+import format from '../util/time';
+import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
 export default {
   components: {
     SongPage,
+    PlayPage,
   },
   data() {
     return {
@@ -36,53 +43,43 @@ export default {
           this.songs = res.data.result.songs;
           this.isShow = true;
           this.songs.forEach((item) => {
-            item.duration = this.format(item.duration);
+            item.duration = format(item.duration);
           });
-          console.log(this.songs);
         })
         .catch((error) => {
           console.log(error);
         });
-    },
-    format(time) {
-      let m = Math.floor(time / 60000),
-        s = Math.floor((time % 60000) / 1000);
-      m = m < 10 ? '0' + m : m;
-      s = s < 10 ? '0' + s : s;
-      return m + ':' + s;
     },
   },
 };
 </script>
 
 <style lang="less" scoped>
+.container {
+  position: relative;
+}
 .head {
   height: 80px;
-  background: aqua;
+  background: rgba(80, 205, 205, 0.779);
   display: flex;
   justify-content: center;
   align-items: center;
-  .box {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  .search {
     display: flex;
   }
   /deep/.el-input__inner {
-    width: 500px;
-    height: 30px;
     background: rgba(98, 184, 184, 0.753);
     color: white;
     border: 1px solid rgba(98, 184, 184, 0.753);
     border-radius: 20px;
-    padding: 10px;
-  }
-  /deep/.el-button--default {
-    width: 80px;
-    height: 30px;
-    border: 1px solid rgba(98, 184, 184, 0.753);
-    border-radius: 20px;
-    background: rgba(98, 184, 184, 0.753);
-    color: white;
-    cursor: pointer;
-    margin-left: 10px;
+    &:focus {
+      outline: none;
+    }
   }
 }
 </style>

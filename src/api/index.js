@@ -2,7 +2,7 @@ import axios from 'axios';
 axios.defaults.baseURL = 'http://localhost:3000';
 
 let baseRequest = (url, method, params) => {
-    let obj = {
+    const obj = {
         url,
         method
     };
@@ -14,8 +14,13 @@ let baseRequest = (url, method, params) => {
     }
     return axios(obj);
 };
-export let search = word => {
-    return baseRequest('search', 'get', {
+export const search = word => {
+    return baseRequest('/search', 'get', {
         keywords: word
+    });
+};
+export const getSongUrl = id => {
+    return baseRequest('/song/url', 'get', {
+        id
     });
 };
