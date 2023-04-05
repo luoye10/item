@@ -31,7 +31,21 @@
         <div class="end">{{ duration }}</div>
       </div>
     </div>
-    <div class="icon"></div>
+    <div class="icon">
+      <el-dropdown placement="top">
+        <i class="el-icon-bell"></i>
+        <el-dropdown-menu slot="dropdown">
+          <el-slider v-model="value" vertical height="200px"> </el-slider>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-dropdown placement="top">
+        <i class="el-icon-s-unfold"></i>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>顺序播放</el-dropdown-item>
+          <el-dropdown-item>随机播放</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
   </div>
 </template>
 <script>
@@ -45,7 +59,7 @@ export default {
       singer: '',
       duration: '',
       width: 0,
-      audio: '',
+      value: 0,
     };
   },
   mounted() {
@@ -138,8 +152,8 @@ export default {
   .item {
     height: 50px;
     display: flex;
+    justify-content: center;
     line-height: 50px;
-    margin-left: 100px;
     .prev,
     .next {
       font-size: 20px;
@@ -152,10 +166,12 @@ export default {
     }
     .word {
       margin-left: 10px;
+      cursor: pointer;
     }
   }
   .time {
     display: flex;
+    justify-content: center;
     .current,
     .end {
       width: 50px;
@@ -174,7 +190,16 @@ export default {
     }
   }
   .icon {
-    flex: 2;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .el-icon-bell,
+    .el-icon-s-unfold {
+      font-size: 20px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
   }
 }
 </style>

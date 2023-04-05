@@ -15,6 +15,7 @@
       </div>
     </div>
     <song-page :songs="songs" v-show="isShow"></song-page>
+    <lyric-page v-show="!isShow"></lyric-page>
     <play-page></play-page>
   </div>
 </template>
@@ -22,12 +23,14 @@
 <script>
 import { search } from '../api/index';
 import format from '../util/time';
+import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
 export default {
   components: {
     SongPage,
     PlayPage,
+    LyricPage,
   },
   data() {
     return {
@@ -75,11 +78,14 @@ export default {
   /deep/.el-input__inner {
     background: rgba(98, 184, 184, 0.753);
     color: white;
-    border: 1px solid rgba(98, 184, 184, 0.753);
+    border: 1px solid rgba(149, 192, 192, 0.753);
     border-radius: 20px;
     &:focus {
       outline: none;
     }
+  }
+  /deep/.el-button {
+    margin-left: 10px;
   }
 }
 </style>
