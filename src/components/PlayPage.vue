@@ -49,6 +49,7 @@
   </div>
 </template>
 <script>
+import timeHandle from '../util/time';
 export default {
   data() {
     return {
@@ -78,7 +79,9 @@ export default {
     },
     prev() {},
     next() {},
-    show() {},
+    show() {
+      this.$emit('lyricShow', true);
+    },
     receive() {
       this.$bus.$on('startPlay', (obj, v) => {
         this.isShow = v;
@@ -87,25 +90,14 @@ export default {
         this.singer = obj.artists[0].name;
         this.duration = obj.duration;
       });
-      this.$bus.$on('send', (currentTime) => {
-        this.current = this.timeChange(currentTime);
+      this.$bus.$on('current', (currentTime) => {
+        this.current = timeHandle(currentTime);
         let per = Math.floor((currentTime / this.convert(this.duration)) * 100);
         this.width = per;
       });
-    },
-    timeChange(time) {
-      if (time >= 60) {
-        let m = Math.floor(time / 60),
-          s = time % 60;
-        m = m < 10 ? '0' + m : m;
-        s = s < 10 ? '0' + s : s;
-        time = m + ':' + s;
-      } else if (time >= 10 && time < 60) {
-        time = '00' + ':' + time;
-      } else {
-        time = '00' + ':' + '0' + time;
-      }
-      return time;
+      this.$bus.$on('playStop', (v) => {
+        this.isShow = v;
+      });
     },
     convert(timeStr) {
       let m = Number(timeStr.slice(0, 2)),

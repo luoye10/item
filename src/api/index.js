@@ -24,3 +24,8 @@ export const getSongUrl = id => {
         id
     });
 };
+export const getLyric = id => {
+    return baseRequest('/lyric', 'get', {
+        id
+    });
+};

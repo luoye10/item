@@ -15,14 +15,14 @@
       </div>
     </div>
     <song-page :songs="songs" v-show="isShow"></song-page>
-    <lyric-page v-show="!isShow"></lyric-page>
-    <play-page></play-page>
+    <lyric-page v-show="isOpen" @lyricHide="hide"></lyric-page>
+    <play-page @lyricShow="show"></play-page>
   </div>
 </template>
 
 <script>
 import { search } from '../api/index';
-import format from '../util/time';
+import format from '../util/format';
 import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
@@ -37,10 +37,12 @@ export default {
       word: '',
       songs: [],
       isShow: false,
+      isOpen: false,
     };
   },
   methods: {
     startSearch() {
+      this.isOpen = false;
       search(this.word)
         .then((res) => {
           this.songs = res.data.result.songs;
@@ -52,6 +54,14 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    show(v) {
+      this.isOpen = v;
+      this.isShow = !this.isOpen;
+    },
+    hide(v) {
+      this.isOpen = v;
+      this.isShow = !this.isOpen;
     },
   },
 };
