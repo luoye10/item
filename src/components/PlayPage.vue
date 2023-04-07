@@ -25,7 +25,7 @@
       </div>
       <div class="time">
         <div class="current">{{ current }}</div>
-        <div class="progress">
+        <div class="progress" @click="selectTime" ref="barEl">
           <div class="rate" :style="{ width: width + '%' }"></div>
         </div>
         <div class="end">{{ duration }}</div>
@@ -61,11 +61,17 @@ export default {
       duration: '',
       width: 0,
       value: 0,
+      w: 0,
     };
   },
   mounted() {
     this.receive();
     this.audio = document.getElementsByClassName('player')[0];
+    const bar = this.$refs.barEl;
+    const w = window.getComputedStyle(bar).width;
+    if (w) {
+      this.w = parseFloat(w);
+    }
   },
   methods: {
     play() {
@@ -104,6 +110,12 @@ export default {
         s = Number(timeStr.slice(-2)),
         num = m * 60 + s;
       return num;
+    },
+    selectTime(e) {
+      const x = e.offsetX;
+      const per = x / this.w;
+      const totalTime = this.convert(this.duration);
+      this.audio.currentTime = totalTime * per;
     },
   },
 };
