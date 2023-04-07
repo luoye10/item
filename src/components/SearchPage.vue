@@ -70,10 +70,11 @@ export default {
 <style lang="less" scoped>
 .container {
   position: relative;
+  height: 100%;
 }
 .head {
   height: 80px;
-  background: rgba(80, 205, 205, 0.779);
+  background: #50cdcd59;
   display: flex;
   justify-content: center;
   align-items: center;
