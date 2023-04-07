@@ -1,31 +1,33 @@
 <template>
   <div class="lyrics">
-    <i class="el-icon-arrow-down" @click="hide"></i>
-    <ul class="itemList">
-      <li
-        :class="['item', { active: isAdd }]"
-        v-for="item in lyrics"
-        :key="item.massage"
-      >
-        {{ item }}
-      </li>
-    </ul>
+    <div class="item-box" ref="boxEl">
+      <ul class="itemList">
+        <li
+          :class="['item', { active: index === activeIndex }]"
+          v-for="(item, index) in lyrics"
+          :key="item.massage"
+        >
+          {{ item.l }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
+import timeHandle from '@/util/time';
 import { getLyric } from '../api/index';
 export default {
   data() {
     return {
       id: null,
       lyrics: [],
-      times: [],
+      activeIndex: 0,
       current: '',
-      isAdd: false,
     };
   },
   mounted() {
     this.recieve();
+    this.highLight();
   },
   methods: {
     songLyric() {
@@ -41,15 +43,33 @@ export default {
     convertLyric(item) {
       const lyricStr = item.split('\n');
       const reg = /\[\d{2}:\d{2}\.\d{2,}\]/;
+      const arr = [];
       lyricStr.forEach((l) => {
         let timeArr = l.match(reg);
         if (timeArr) {
           timeArr = l.match(reg)[0];
+          const time = timeArr.slice(1, 6);
+          const lyric = l.replace(reg, '');
+          const obj = {
+            t: time,
+            l: lyric,
+          };
+          arr.push(obj);
         }
-        let time = timeArr.slice(1, 6);
-        this.times.push(time);
-        let lyric = l.replace(reg, '');
-        this.lyrics.push(lyric);
+        this.lyrics = arr;
+      });
+    },
+    highLight() {
+      this.$bus.$on('current', (v) => {
+        const lyrics = this.lyrics;
+        const t = timeHandle(v);
+        lyrics.forEach((item, index) => {
+          const _t = item.t;
+          if (_t <= t) {
+            this.activeIndex = index;
+            this.$refs.boxEl.scrollTop = (this.activeIndex - 7) * 30;
+          }
+        });
       });
     },
     hide() {
@@ -60,6 +80,9 @@ export default {
         this.id = v;
         this.songLyric();
       });
+      this.$bus.$on('time', (v) => {
+        console.log(v);
+      });
     },
   },
 };
@@ -68,41 +91,39 @@ export default {
 .lyrics {
   position: absolute;
   left: 0;
-  top: 100px;
+  top: 80px;
   right: 0;
-  bottom: 0;
-  background: aqua;
+  bottom: 80px;
+  // background: aqua;
+  backdrop-filter: blur(5px);
   .el-icon-arrow-down {
     font-size: 20px;
     margin-left: 30px;
     cursor: pointer;
   }
-  .itemList {
+  .item-box {
+    height: 100%;
     width: 500px;
-    height: 400px;
-    border-radius: 5px;
-    background: #adf;
-    color: white;
+    margin: 0 auto;
     overflow-y: scroll;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translate(-50%, 0);
-    .item {
-      height: 20px;
-      text-align: center;
-      margin: 10px 0;
-    }
     &::-webkit-scrollbar {
-      width: 10px;
+      width: 5px;
       border-radius: 5px;
       background: aqua;
     }
     &::-webkit-scrollbar-thumb {
-      width: 10px;
-      height: 10px;
+      width: 5px;
+      height: 5px;
       border-radius: 5px;
       background: pink;
+    }
+  }
+  .itemList {
+    color: white;
+    .item {
+      height: 20px;
+      text-align: center;
+      margin: 10px 0;
     }
     .active {
       color: red;
