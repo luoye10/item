@@ -1,5 +1,5 @@
 import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = process.env.VUE_APP_API;
 
 let baseRequest = (url, method, params) => {
     const obj = {
@@ -28,4 +28,7 @@ export const getLyric = id => {
     return baseRequest('/lyric', 'get', {
         id
     });
+};
+export const getComment = params => {
+    return baseRequest('/comment/music', 'get', params);
 };
