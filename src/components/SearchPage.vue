@@ -15,7 +15,7 @@
       </div>
     </div>
     <song-page :songs="songs" v-show="isShow"></song-page>
-    <lyric-page v-show="isOpen" @lyricHide="hide"></lyric-page>
+    <lyric-page v-show="isOpen"></lyric-page>
     <play-page @lyricShow="show"></play-page>
   </div>
 </template>
@@ -56,12 +56,13 @@ export default {
         });
     },
     show(v) {
-      this.isOpen = v;
-      this.isShow = !this.isOpen;
-    },
-    hide(v) {
-      this.isOpen = v;
-      this.isShow = !this.isOpen;
+      if (this.isOpen === false) {
+        this.isOpen = v;
+        this.isShow = !this.isOpen;
+      } else {
+        this.isOpen = false;
+        this.isShow = true;
+      }
     },
   },
 };

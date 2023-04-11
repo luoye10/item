@@ -47,6 +47,7 @@ export default {
           this.$refs.audio.onloadedmetadata = () => {
             this.$bus.$emit('startPlay', this.item, false);
             this.$bus.$emit('lyric', id);
+            this.$bus.$emit('comment', id);
             this.$refs.audio.play();
           };
         })

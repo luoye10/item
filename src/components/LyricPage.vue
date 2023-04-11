@@ -1,5 +1,5 @@
 <template>
-  <div class="lyrics">
+  <div class="holder">
     <div class="item-box" ref="boxEl">
       <ul class="itemList">
         <li
@@ -11,12 +11,15 @@
         </li>
       </ul>
     </div>
+    <song-comment></song-comment>
   </div>
 </template>
 <script>
 import timeHandle from '@/util/time';
 import { getLyric } from '../api/index';
+import SongComment from './SongComment.vue';
 export default {
+  components: { SongComment },
   data() {
     return {
       id: null,
@@ -72,9 +75,6 @@ export default {
         });
       });
     },
-    hide() {
-      this.$emit('lyricHide', false);
-    },
     recieve() {
       this.$bus.$on('lyric', (v) => {
         this.id = v;
@@ -88,21 +88,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.lyrics {
-  position: absolute;
-  left: 0;
-  top: 80px;
-  right: 0;
-  bottom: 80px;
-  // background: aqua;
+.holder {
+  margin-top: 80px;
   backdrop-filter: blur(5px);
-  .el-icon-arrow-down {
-    font-size: 20px;
-    margin-left: 30px;
-    cursor: pointer;
-  }
   .item-box {
-    height: 100%;
+    height: 400px;
     width: 500px;
     margin: 0 auto;
     overflow-y: scroll;
