@@ -91,11 +91,12 @@ export default {
 .holder {
   margin-top: 80px;
   backdrop-filter: blur(5px);
+  overflow: auto;
   .item-box {
     height: 400px;
     width: 500px;
     margin: 0 auto;
-    overflow-y: scroll;
+    overflow: auto;
     &::-webkit-scrollbar {
       width: 5px;
       border-radius: 5px;

@@ -127,8 +127,8 @@ export default {
   bottom: 0;
   right: 0;
   height: 80px;
-  background: whitesmoke;
-  border-top: 1px solid #dadada;
+  background: white;
+  border-top: 3px solid #ede1e1;
   display: flex;
   .song {
     flex: 2;

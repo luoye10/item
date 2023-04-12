@@ -43,8 +43,6 @@ export default {
           .then((res) => {
             this.comments = res.data.comments;
             this.total = res.data.total;
-            console.log(res);
-            console.log(this.comments);
           })
           .catch((error) => {
             console.log(error);

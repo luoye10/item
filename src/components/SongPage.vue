@@ -4,11 +4,22 @@
       <li
         :class="['item', { active: item.id === songId }]"
         v-for="(item, index) in songs"
-        :key="item.massage"
+        :key="item.id"
         @click="songPlay(item.id, item)"
       >
         <div class="num">
           {{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}
+        </div>
+        <div class="icon">
+          <heart-icon
+            @click.stop.native="collect(item)"
+            v-if="!selectIds.includes(item.id)"
+          ></heart-icon>
+          <select-heart
+            v-else
+            class="click"
+            @click.stop.native="collect(item)"
+          ></select-heart>
         </div>
         <div class="name">{{ item.name }}</div>
         <div class="singer">{{ item.artists[0].name }}</div>
@@ -26,16 +37,29 @@
   </div>
 </template>
 <script>
+import HeartIcon from '@/assets/icons/HeartIcon.vue';
 import { getSongUrl } from '../api/index';
+import SelectHeart from '@/assets/icons/SelectHeart.vue';
+import { getValue, saveValue } from '@/util/saveAndGet';
 export default {
   props: ['songs'],
+  components: {
+    HeartIcon,
+    SelectHeart,
+  },
   data() {
     return {
       songId: null,
       src: '',
       currentTime: '',
       item: null,
+      selectSongs: [],
+      selectIds: [],
     };
+  },
+  mounted() {
+    this.selectSongs = getValue('my like') || [];
+    this.selectIds = this.selectSongs.map((s) => s.id);
   },
   methods: {
     songPlay(id, item) {
@@ -62,16 +86,26 @@ export default {
     stopPlay() {
       this.$bus.$emit('playStop', true);
     },
+    collect(song) {
+      const index = this.selectIds.findIndex((s) => s === song.id);
+      if (index > -1) {
+        this.selectSongs.splice(index, 1);
+        this.selectIds.splice(index, 1);
+      } else {
+        this.selectSongs.push(song);
+        this.selectIds.push(song.id);
+      }
+      saveValue('my like', this.selectSongs);
+    },
   },
 };
 </script>
 <style lang="less" scoped>
 .songList {
-  position: absolute;
-  top: 80px;
-  left: 0;
-  right: 0;
-  bottom: 200px;
+  margin-left: 200px;
+  margin-top: 80px;
+  margin-bottom: 100px;
+  overflow: auto;
 }
 .itemList {
   margin: 20px;
@@ -85,21 +119,40 @@ export default {
     background: #dadada;
     line-height: 100px;
     display: flex;
+    align-items: center;
     cursor: pointer;
     .num {
-      flex: 1;
+      width: 20px;
+    }
+    .icon {
+      width: 20px;
+      margin: 0 20px;
+      .click {
+        color: red;
+      }
     }
     .name {
       flex: 2.5;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .singer {
-      flex: 2;
+      flex: 1.5;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 0 10px;
     }
     .album {
-      flex: 3.5;
+      flex: 2;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .time {
-      flex: 1;
+      width: 30px;
+      margin: 0 10px;
     }
   }
   .active {
