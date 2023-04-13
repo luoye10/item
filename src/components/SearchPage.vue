@@ -7,6 +7,7 @@
           size="mini"
           prefix-icon="el-icon-search"
           @keyup.enter.native="startSearch"
+          clearable
         >
         </el-input>
         <el-button @click="startSearch" type="primary" round size="mini"
@@ -16,19 +17,54 @@
     </div>
     <div class="content" v-show="display">
       <div class="song-sheet">
-        <ul class="sheets">
+        <div class="playList">
+          <div class="playList-head" @click="spread">
+            <span>创建的歌单</span>
+            <span>
+              <i class="el-icon-caret-bottom" v-if="isSpread"></i>
+              <i class="el-icon-caret-right" v-else></i>
+            </span>
+          </div>
+          <div class="add" @click="pop">
+            <i class="el-icon-plus"></i>
+          </div>
+        </div>
+        <ul class="sheets" v-show="isSpread">
           <li
             class="sheet"
-            @click="showList('my like')"
             v-for="item in songSheet"
             :key="item.id"
+            @click.stop="showList(item.title)"
           >
-            <heart-icon></heart-icon>
+            <heart-icon v-if="item.isAdd"></heart-icon>
             <div class="name">{{ item.name }}</div>
           </li>
         </ul>
       </div>
-      <song-page :songs="songs" v-show="isShow" class="songs"></song-page>
+      <song-page
+        :songs="songs"
+        :songSheet="songSheet"
+        v-show="isShow"
+        class="songs"
+      ></song-page>
+    </div>
+    <div class="box" v-show="isPop">
+      <div class="star" @click="hide">×</div>
+      <div class="title">新建歌单</div>
+      <el-input
+        v-model="name"
+        placeholder="请输入新歌单标题"
+        clearable
+        class="input"
+      ></el-input>
+      <el-button
+        @click="addSheet"
+        type="primary"
+        round
+        size="medium"
+        class="button"
+        >创建</el-button
+      >
     </div>
     <lyric-page v-show="isOpen"></lyric-page>
     <play-page @lyricShow="show"></play-page>
@@ -43,6 +79,7 @@ import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
 import { getValue } from '@/util/saveAndGet';
+import { setValue } from '@/util/saveAndGet';
 export default {
   components: {
     SongPage,
@@ -57,7 +94,17 @@ export default {
       isShow: false,
       isOpen: false,
       display: true,
-      songSheet: [{ name: '我喜欢的音乐', id: 1325129115 }],
+      isSpread: true,
+      songSheet: [
+        {
+          title: 'my like',
+          name: '我喜欢的音乐',
+          id: 1325129115,
+          isAdd: true,
+        },
+      ],
+      name: '',
+      isPop: false,
     };
   },
   methods: {
@@ -74,6 +121,27 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    spread() {
+      this.isSpread = !this.isSpread;
+    },
+    pop() {
+      this.isPop = true;
+    },
+    hide() {
+      this.isPop = false;
+    },
+    addSheet() {
+      this.isPop = false;
+      let obj = {
+        title: 'movies',
+        name: this.name,
+        id: 1315229519,
+        isAdd: false,
+      };
+      this.songSheet.push(obj);
+      this.name = '';
+      setValue(obj.title, obj);
     },
     show(v) {
       if (this.isOpen === false) {
@@ -123,7 +191,7 @@ export default {
       outline: none;
     }
   }
-  /deep/.el-button {
+  /deep/.el-button--mini {
     margin-left: 10px;
   }
 }
@@ -139,10 +207,24 @@ export default {
     width: 200px;
     background: white;
     border-right: 2px solid #dadada;
+    .playList {
+      height: 30px;
+      line-height: 30px;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+    .playList-head {
+      flex: 1;
+      cursor: pointer;
+    }
+    .add {
+      width: 20px;
+      cursor: pointer;
+    }
     .sheet {
       height: 40px;
       padding-left: 20px;
-      line-height: 40px;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -156,6 +238,30 @@ export default {
   }
   .songs {
     flex: 1;
+  }
+}
+.box {
+  width: 400px;
+  height: 200px;
+  background: whitesmoke;
+  border-radius: 5px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 10px;
+  .star {
+    font-size: 20px;
+    margin-left: 370px;
+    cursor: pointer;
+  }
+  .title {
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+  }
+  .button {
+    margin: 30px 160px;
   }
 }
 </style>

@@ -55,6 +55,7 @@ export default {
 <style lang="less" scoped>
 .comment-box {
   margin: 50px 40px;
+  margin-bottom: 100px;
   .total {
     font-size: 22px;
     font-weight: bold;
@@ -65,7 +66,7 @@ export default {
     padding: 10px 0;
     display: flex;
     &:last-child {
-      border-bottom-color: white;
+      border-bottom-color: transparent;
     }
   }
   .img {

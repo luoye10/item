@@ -11,7 +11,7 @@ export function getValue(key) {
     }
 }
 
-export function saveValue(key, val) {
+export function setValue(key, val) {
     val = JSON.stringify(val);
     localStorage.setItem(key, val);
 }
