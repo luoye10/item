@@ -40,7 +40,7 @@
 import HeartIcon from '@/assets/icons/HeartIcon.vue';
 import { getSongUrl } from '../api/index';
 import SelectHeart from '@/assets/icons/SelectHeart.vue';
-import { getValue, saveValue } from '@/util/saveAndGet';
+import { getValue, setValue } from '@/util/saveAndGet';
 export default {
   props: ['songs'],
   components: {
@@ -95,7 +95,7 @@ export default {
         this.selectSongs.push(song);
         this.selectIds.push(song.id);
       }
-      saveValue('my like', this.selectSongs);
+      setValue('my like', this.selectSongs);
     },
   },
 };

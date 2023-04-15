@@ -41,12 +41,7 @@
           </li>
         </ul>
       </div>
-      <song-page
-        :songs="songs"
-        :songSheet="songSheet"
-        v-show="isShow"
-        class="songs"
-      ></song-page>
+      <song-page :songs="songs" v-show="isShow" class="songs"></song-page>
     </div>
     <div class="box" v-show="isPop">
       <div class="star" @click="hide">×</div>
@@ -78,8 +73,7 @@ import format from '../util/format';
 import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
-import { getValue } from '@/util/saveAndGet';
-import { setValue } from '@/util/saveAndGet';
+import { getValue, setValue } from '@/util/saveAndGet';
 export default {
   components: {
     SongPage,
