@@ -6,6 +6,7 @@
         v-for="(item, index) in songs"
         :key="item.id"
         @click="songPlay(item.id, item)"
+        @contextmenu="addSheet($event, item.id, item)"
       >
         <div class="num">
           {{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}
@@ -27,6 +28,16 @@
         <div class="time">{{ item.duration }}</div>
       </li>
     </ul>
+    <ul class="listItem" v-show="isShow" ref="pop">
+      <li
+        class="list"
+        v-for="list in songSheet"
+        :key="list.title"
+        @click="addSong(list)"
+      >
+        {{ list.name }}
+      </li>
+    </ul>
     <audio
       :src="src"
       ref="audio"
@@ -40,7 +51,7 @@
 import HeartIcon from '@/assets/icons/HeartIcon.vue';
 import { getSongUrl } from '../api/index';
 import SelectHeart from '@/assets/icons/SelectHeart.vue';
-import { getValue, setValue } from '@/util/saveAndGet';
+import { getValue, setValue, getListValue } from '@/util/saveAndGet';
 export default {
   props: ['songs'],
   components: {
@@ -55,13 +66,24 @@ export default {
       item: null,
       selectSongs: [],
       selectIds: [],
+      isShow: false,
+      id: null,
+      key: null,
+      songSheet: [],
     };
   },
   mounted() {
-    this.selectSongs = getValue('my like') || [];
+    this.initSheet();
+    this.selectSongs = getValue(this.key) || [];
     this.selectIds = this.selectSongs.map((s) => s.id);
+    document.addEventListener('click', () => {
+      this.isShow = false;
+    });
   },
   methods: {
+    initSheet() {
+      this.songSheet = getListValue();
+    },
     songPlay(id, item) {
       this.songId = id;
       this.item = item;
@@ -87,15 +109,35 @@ export default {
       this.$bus.$emit('playStop', true);
     },
     collect(song) {
+      this.initSheet();
       const index = this.selectIds.findIndex((s) => s === song.id);
       if (index > -1) {
         this.selectSongs.splice(index, 1);
         this.selectIds.splice(index, 1);
       } else {
-        this.selectSongs.push(song);
-        this.selectIds.push(song.id);
+        this.selectSongs.unshift(song);
+        this.selectIds.unshift(song.id);
       }
-      setValue('my like', this.selectSongs);
+      const key = this.songSheet.find((item) => item.name === '我喜欢的音乐');
+      setValue(key.title, this.selectSongs);
+    },
+    addSheet(e, id, item) {
+      this.initSheet();
+      e.preventDefault();
+      this.id = id;
+      this.item = item;
+      this.isShow = true;
+      this.$refs.pop.style.left = e.clientX + 'px';
+      this.$refs.pop.style.top = e.clientY + 'px';
+    },
+    addSong(list) {
+      console.log(list);
+      const key = list.title;
+      this.selectSongs = getValue(key) || [];
+      if (this.selectSongs) {
+        this.selectSongs.unshift(this.item);
+        setValue(key, this.selectSongs);
+      }
     },
   },
 };
@@ -106,6 +148,7 @@ export default {
   margin-top: 80px;
   margin-bottom: 100px;
   overflow: auto;
+  position: relative;
 }
 .itemList {
   margin: 20px;
@@ -157,6 +200,22 @@ export default {
   }
   .active {
     background: aqua;
+  }
+}
+.listItem {
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  .list {
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    &:hover {
+      background: #ede1e1;
+    }
   }
 }
 </style>

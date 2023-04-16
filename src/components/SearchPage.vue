@@ -33,7 +33,7 @@
           <li
             class="sheet"
             v-for="item in songSheet"
-            :key="item.id"
+            :key="item.title"
             @click.stop="showList(item.title)"
           >
             <heart-icon v-if="item.isAdd"></heart-icon>
@@ -51,6 +51,7 @@
         placeholder="请输入新歌单标题"
         clearable
         class="input"
+        @keyup.enter.native="addSheet"
       ></el-input>
       <el-button
         @click="addSheet"
@@ -73,7 +74,8 @@ import format from '../util/format';
 import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
-import { getValue, setValue } from '@/util/saveAndGet';
+import { getValue, setValue, getListValue, listKey } from '@/util/saveAndGet';
+import randomStr from '@/util/random';
 export default {
   components: {
     SongPage,
@@ -89,17 +91,18 @@ export default {
       isOpen: false,
       display: true,
       isSpread: true,
-      songSheet: [
-        {
-          title: 'my like',
-          name: '我喜欢的音乐',
-          id: 1325129115,
-          isAdd: true,
-        },
-      ],
+      songSheet: [],
       name: '',
       isPop: false,
+      collectSongs: [],
+      collectIds: [],
+      obj: {},
     };
+  },
+  mounted() {
+    this.songSheet = getListValue();
+    this.collectSongs = getValue(this.obj.title) || [];
+    this.collectIds = this.collectSongs.map((s) => s.id);
   },
   methods: {
     startSearch() {
@@ -127,15 +130,17 @@ export default {
     },
     addSheet() {
       this.isPop = false;
-      let obj = {
-        title: 'movies',
+      this.obj = {
+        title: randomStr(),
         name: this.name,
-        id: 1315229519,
         isAdd: false,
       };
-      this.songSheet.push(obj);
-      this.name = '';
-      setValue(obj.title, obj);
+      if (this.name === '我喜欢的音乐') {
+        this.obj.isAdd = true;
+      }
+      this.songSheet.push(this.obj);
+      setValue(listKey, this.songSheet);
+      setValue(this.obj.title, this.collectSongs);
     },
     show(v) {
       if (this.isOpen === false) {

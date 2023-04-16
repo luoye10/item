@@ -1,3 +1,9 @@
+export const listKey = 'songList';
+
+export const getListValue = () => {
+    return getValue(listKey) || [];
+};
+
 export function getValue(key) {
     const v = localStorage.getItem(key);
     if (!v) {
