@@ -79,6 +79,7 @@ export default {
     document.addEventListener('click', () => {
       this.isShow = false;
     });
+    this.change();
   },
   methods: {
     initSheet() {
@@ -138,6 +139,22 @@ export default {
         this.selectSongs.unshift(this.item);
         setValue(key, this.selectSongs);
       }
+    },
+    change() {
+      this.$bus.$on('change', (type) => {
+        const currentIndex = this.songs.findIndex((item) => {
+          return item.id === this.songId;
+        });
+        let index = type === 'next' ? currentIndex + 1 : currentIndex - 1;
+        if (index >= this.songs.length) {
+          index = 0;
+        }
+        if (index < 0) {
+          index = this.songs.length - 1;
+        }
+        const list = this.songs[index];
+        this.songPlay(list.id, list);
+      });
     },
   },
 };

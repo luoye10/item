@@ -83,8 +83,12 @@ export default {
         this.audio.play();
       }
     },
-    prev() {},
-    next() {},
+    prev() {
+      this.$bus.$emit('change', 'prev');
+    },
+    next() {
+      this.$bus.$emit('change', 'next');
+    },
     show() {
       this.$emit('lyricShow', true);
     },
