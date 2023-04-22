@@ -52,6 +52,8 @@ import HeartIcon from '@/assets/icons/HeartIcon.vue';
 import { getSongUrl } from '../api/index';
 import SelectHeart from '@/assets/icons/SelectHeart.vue';
 import { getValue, setValue, getListValue } from '@/util/saveAndGet';
+import { rand } from '@/util/random';
+
 export default {
   props: ['songs'],
   components: {
@@ -107,7 +109,7 @@ export default {
       this.$bus.$emit('current', this.currentTime);
     },
     stopPlay() {
-      this.$bus.$emit('playStop', true);
+      this.$bus.$emit('end');
     },
     collect(song) {
       this.initSheet();
@@ -132,7 +134,6 @@ export default {
       this.$refs.pop.style.top = e.clientY + 'px';
     },
     addSong(list) {
-      console.log(list);
       const key = list.title;
       this.selectSongs = getValue(key) || [];
       if (this.selectSongs) {
@@ -141,16 +142,21 @@ export default {
       }
     },
     change() {
-      this.$bus.$on('change', (type) => {
+      this.$bus.$on('change', (type, v) => {
         const currentIndex = this.songs.findIndex((item) => {
           return item.id === this.songId;
         });
-        let index = type === 'next' ? currentIndex + 1 : currentIndex - 1;
-        if (index >= this.songs.length) {
-          index = 0;
-        }
-        if (index < 0) {
-          index = this.songs.length - 1;
+        let index;
+        if (v === 'order') {
+          index = type === 'next' ? currentIndex + 1 : currentIndex - 1;
+          if (index >= this.songs.length) {
+            index = 0;
+          }
+          if (index < 0) {
+            index = this.songs.length - 1;
+          }
+        } else {
+          index = rand(this.songs.length);
         }
         const list = this.songs[index];
         this.songPlay(list.id, list);

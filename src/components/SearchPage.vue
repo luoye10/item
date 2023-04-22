@@ -76,6 +76,7 @@ import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
 import { getValue, setValue, getListValue, listKey } from '@/util/saveAndGet';
 import randomStr from '@/util/random';
+import { success } from '@/util/message';
 export default {
   components: {
     SongPage,
@@ -97,6 +98,7 @@ export default {
       collectSongs: [],
       collectIds: [],
       obj: {},
+      isPrompt: false,
     };
   },
   mounted() {
@@ -124,12 +126,13 @@ export default {
     },
     pop() {
       this.isPop = true;
+      this.name = '';
     },
     hide() {
       this.isPop = false;
+      this.name = '';
     },
     addSheet() {
-      this.isPop = false;
       this.obj = {
         title: randomStr(),
         name: this.name,
@@ -138,9 +141,15 @@ export default {
       if (this.name === '我喜欢的音乐') {
         this.obj.isAdd = true;
       }
+      this.isPrompt = !this.name;
+      if (!this.name) {
+        success('歌单名称不能为空');
+        return;
+      }
       this.songSheet.push(this.obj);
       setValue(listKey, this.songSheet);
       setValue(this.obj.title, this.collectSongs);
+      this.hide();
     },
     show(v) {
       if (this.isOpen === false) {
@@ -157,6 +166,11 @@ export default {
       if (list) {
         this.songs = list;
       }
+    },
+  },
+  watch: {
+    name() {
+      this.isPrompt = false;
     },
   },
 };
@@ -259,8 +273,21 @@ export default {
     text-align: center;
     line-height: 50px;
   }
+  .prompt {
+    color: red;
+    margin-top: 10px;
+  }
   .button {
-    margin: 30px 160px;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%, 0);
+  }
+  .load {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 </style>

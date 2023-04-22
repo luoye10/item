@@ -7,3 +7,7 @@ export default function randomStr() {
     }
     return name;
 }
+
+export function rand(len) {
+    return Math.floor(Math.random() * len);
+}

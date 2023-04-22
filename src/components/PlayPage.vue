@@ -33,16 +33,33 @@
     </div>
     <div class="icon">
       <el-dropdown placement="top">
-        <i class="el-icon-bell"></i>
+        <div class="open" @click="mute">
+          <sound-icon v-if="isOpen"></sound-icon>
+          <mute-icon v-else></mute-icon>
+        </div>
         <el-dropdown-menu slot="dropdown">
-          <el-slider v-model="value" vertical height="200px"> </el-slider>
+          <el-slider
+            v-model="value"
+            vertical
+            height="200px"
+            @change="soundChange"
+          >
+          </el-slider>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-dropdown placement="top">
+      <el-dropdown placement="top" @command="playModel">
         <i class="el-icon-s-unfold"></i>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>顺序播放</el-dropdown-item>
-          <el-dropdown-item>随机播放</el-dropdown-item>
+          <el-dropdown-item
+            command="order"
+            :class="{ active: currentModel === 'order' }"
+            >顺序播放</el-dropdown-item
+          >
+          <el-dropdown-item
+            command="rand"
+            :class="{ active: currentModel === 'rand' }"
+            >随机播放</el-dropdown-item
+          >
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -50,7 +67,11 @@
 </template>
 <script>
 import timeHandle from '../util/time';
+import SoundIcon from '../assets/icons/SoundIcon.vue';
+import MuteIcon from '../assets/icons/MuteIcon.vue';
+
 export default {
+  components: { SoundIcon, MuteIcon },
   data() {
     return {
       isShow: true,
@@ -60,8 +81,10 @@ export default {
       singer: '',
       duration: '',
       width: 0,
-      value: 0,
+      value: 100,
       w: 0,
+      isOpen: true,
+      currentModel: '',
     };
   },
   mounted() {
@@ -72,6 +95,7 @@ export default {
     if (w) {
       this.w = parseFloat(w);
     }
+    this.end();
   },
   methods: {
     play() {
@@ -83,11 +107,34 @@ export default {
         this.audio.play();
       }
     },
+    mute() {
+      if (this.isOpen === true) {
+        this.isOpen = false;
+        this.audio.muted = true;
+        this.value = 0;
+      } else {
+        this.isOpen = true;
+        this.audio.muted = false;
+        this.value = this.audio.volume * 100;
+      }
+    },
+    soundChange() {
+      this.audio.volume = this.value / 100;
+    },
     prev() {
-      this.$bus.$emit('change', 'prev');
+      this.$bus.$emit('change', 'prev', this.currentModel);
     },
     next() {
-      this.$bus.$emit('change', 'next');
+      this.$bus.$emit('change', 'next', this.currentModel);
+    },
+    end() {
+      this.$bus.$on('end', () => {
+        this.next();
+      });
+    },
+    playModel(v) {
+      console.log(v);
+      this.currentModel = v;
     },
     show() {
       this.$emit('lyricShow', true);
@@ -202,12 +249,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    .el-icon-bell,
+    .el-dropdown-selfdefine,
     .el-icon-s-unfold {
       font-size: 20px;
-      margin: 0 10px;
+      margin: 5px 10px;
       cursor: pointer;
     }
   }
+}
+</style>
+<style>
+.el-dropdown-menu__item.active {
+  color: #6cf;
 }
 </style>
