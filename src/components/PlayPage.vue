@@ -12,14 +12,14 @@
     <div class="test">
       <div class="item">
         <div class="prev" @click="prev">
-          <i class="el-icon-arrow-left"></i>
+          <prev-icon></prev-icon>
         </div>
         <div class="play" @click="play">
-          <i class="el-icon-video-play" v-if="isShow"></i>
-          <i class="el-icon-video-pause" v-else></i>
+          <pause-icon v-if="isShow"></pause-icon>
+          <play-icon v-else></play-icon>
         </div>
         <div class="next" @click="next">
-          <i class="el-icon-arrow-right"></i>
+          <next-icon></next-icon>
         </div>
         <div class="word" @click="show">歌词</div>
       </div>
@@ -48,7 +48,7 @@
         </el-dropdown-menu>
       </el-dropdown>
       <el-dropdown placement="top" @command="playModel">
-        <i class="el-icon-s-unfold"></i>
+        <menu-icon></menu-icon>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
             command="order"
@@ -66,12 +66,25 @@
   </div>
 </template>
 <script>
-import timeHandle from '../util/time';
+import { timeHandle } from '../util/time';
 import SoundIcon from '../assets/icons/SoundIcon.vue';
 import MuteIcon from '../assets/icons/MuteIcon.vue';
+import PrevIcon from '@/assets/icons/PrevIcon.vue';
+import NextIcon from '@/assets/icons/NextIcon.vue';
+import PauseIcon from '@/assets/icons/PauseIcon.vue';
+import PlayIcon from '@/assets/icons/PlayIcon.vue';
+import MenuIcon from '@/assets/icons/MenuIcon.vue';
 
 export default {
-  components: { SoundIcon, MuteIcon },
+  components: {
+    SoundIcon,
+    MuteIcon,
+    PrevIcon,
+    NextIcon,
+    PauseIcon,
+    PlayIcon,
+    MenuIcon,
+  },
   data() {
     return {
       isShow: true,
@@ -208,19 +221,19 @@ export default {
     height: 50px;
     display: flex;
     justify-content: center;
-    line-height: 50px;
+    align-items: center;
     .prev,
     .next {
-      font-size: 20px;
+      font-size: 15px;
       cursor: pointer;
     }
     .play {
       font-size: 30px;
-      margin: 0 10px;
+      margin: 0 20px;
       cursor: pointer;
     }
     .word {
-      margin-left: 10px;
+      margin-left: 20px;
       cursor: pointer;
     }
   }

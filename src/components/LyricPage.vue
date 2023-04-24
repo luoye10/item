@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-import timeHandle from '@/util/time';
+import { timeHandle } from '@/util/time';
 import { getLyric } from '../api/index';
 import SongComment from './SongComment.vue';
 export default {
@@ -104,12 +104,12 @@ export default {
     }
     &::-webkit-scrollbar-thumb {
       width: 5px;
-      height: 5px;
       border-radius: 5px;
       background: pink;
     }
   }
   .itemList {
+    margin: 50px 0;
     color: white;
     .item {
       height: 20px;

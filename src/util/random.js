@@ -1,4 +1,4 @@
-export default function randomStr() {
+export function randomStr() {
     let name = '';
     let str = 'abcdefghijklmn';
     for (let i = 0; i < 8; i++) {

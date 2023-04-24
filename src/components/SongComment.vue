@@ -2,14 +2,14 @@
   <div class="comment-box">
     <div class="total">{{ text + '(' + total + ')' }}</div>
     <ul class="itemList">
-      <li class="item" v-for="item in comments" :key="item.massage">
-        <img :src="item.user.avatarUrl" class="img" />
+      <li class="item" v-for="item in comments" :key="item.time">
+        <img :src="item.url" class="img" />
         <div class="text">
           <div class="comment">
-            <div class="name">{{ item.user.nickname + ' :' }}</div>
-            <div class="content">{{ item.content }}</div>
+            <span class="name">{{ item.name + ' :' }}</span>
+            <span class="content">{{ item.text }}</span>
           </div>
-          <div class="time">{{ item.timeStr }}</div>
+          <div class="time">{{ item.tm }}</div>
         </div>
       </li>
     </ul>
@@ -17,13 +17,13 @@
 </template>
 <script>
 import { getComment } from '@/api/index';
+import { formatTime } from '@/util/time';
 export default {
   data() {
     return {
       limit: 20,
       id: null,
       comments: [],
-      time: null,
       text: '最新评论',
       total: null,
     };
@@ -41,8 +41,16 @@ export default {
         };
         getComment(params)
           .then((res) => {
-            this.comments = res.data.comments;
             this.total = res.data.total;
+            let comments = res.data.comments;
+            let list = comments.map((item) => {
+              item.url = item.user.avatarUrl;
+              item.name = item.user.nickname;
+              item.text = item.content;
+              item.tm = formatTime(item.time);
+              return item;
+            });
+            this.comments = list;
           })
           .catch((error) => {
             console.log(error);
@@ -77,18 +85,14 @@ export default {
   }
   .text {
     margin-left: 30px;
-    .comment {
-      display: flex;
-    }
     .name {
+      margin-right: 10px;
       color: blue;
       cursor: pointer;
     }
-    .content {
-      margin-left: 10px;
-    }
     .time {
       margin: 10px 0;
+      color: rgba(41, 40, 40, 0.815);
     }
   }
 }

@@ -31,8 +31,8 @@
         </div>
         <ul class="sheets" v-show="isSpread">
           <li
-            class="sheet"
             v-for="item in songSheet"
+            class="sheet"
             :key="item.title"
             @click.stop="showList(item.title)"
           >
@@ -70,12 +70,12 @@
 <script>
 import HeartIcon from '@/assets/icons/HeartIcon.vue';
 import { search } from '../api/index';
-import format from '../util/format';
+import { format } from '../util/time';
 import LyricPage from './LyricPage.vue';
 import PlayPage from './PlayPage.vue';
 import SongPage from './SongPage.vue';
 import { getValue, setValue, getListValue, listKey } from '@/util/saveAndGet';
-import randomStr from '@/util/random';
+import { randomStr } from '@/util/random';
 import { success } from '@/util/message';
 export default {
   components: {
