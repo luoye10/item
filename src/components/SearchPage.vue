@@ -32,7 +32,7 @@
         <ul class="sheets" v-show="isSpread">
           <li
             v-for="item in songSheet"
-            class="sheet"
+            :class="['sheet', { active: title === item.title }]"
             :key="item.title"
             @click.stop="showList(item.title)"
           >
@@ -99,6 +99,7 @@ export default {
       collectIds: [],
       obj: {},
       isPrompt: false,
+      title: '',
     };
   },
   mounted() {
@@ -161,6 +162,7 @@ export default {
       }
     },
     showList(name) {
+      this.title = name;
       const list = getValue(name);
       this.isShow = true;
       if (list) {
@@ -248,6 +250,9 @@ export default {
         margin-left: 10px;
       }
     }
+  }
+  .active {
+    background: #ede1e1;
   }
   .songs {
     flex: 1;

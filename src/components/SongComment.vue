@@ -1,31 +1,79 @@
 <template>
   <div class="comment-box">
-    <div class="total">{{ text + '(' + total + ')' }}</div>
-    <ul class="itemList">
-      <li class="item" v-for="item in comments" :key="item.time">
-        <img :src="item.url" class="img" />
-        <div class="text">
-          <div class="comment">
-            <span class="name">{{ item.name + ' :' }}</span>
-            <span class="content">{{ item.text }}</span>
+    <div class="hot-comment">
+      <div class="total">热评</div>
+      <ul class="itemList">
+        <li class="item" v-for="item in hotComments" :key="item.time">
+          <img :src="item.url" class="img" />
+          <div class="text">
+            <div class="comment">
+              <span class="name">{{ item.name + ' :' }}</span>
+              <span class="content">{{ item.text }}</span>
+            </div>
+            <div class="time-like">
+              <div class="time">{{ item.tm }}</div>
+              <div class="like">
+                <thumb-icon></thumb-icon>
+                <div class="count">
+                  {{ item.likedCount > 0 ? item.likedCount : '' }}
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="time">{{ item.tm }}</div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="commnets">
+      <div class="total">{{ text + '(' + totalComment + ')' }}</div>
+      <ul class="itemList">
+        <li class="item" v-for="item in comments" :key="item.time">
+          <img :src="item.url" class="img" />
+          <div class="text">
+            <div class="comment">
+              <span class="name">{{ item.name + ' :' }}</span>
+              <span class="content">{{ item.text }}</span>
+            </div>
+            <div class="time-like">
+              <div class="time">{{ item.tm }}</div>
+              <div class="like">
+                <thumb-icon></thumb-icon>
+                <div class="count">
+                  {{ item.likedCount > 0 ? item.likedCount : '' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="page-box">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="limit"
+        :total="totalComment"
+        @current-change="pageChange"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 <script>
 import { getComment } from '@/api/index';
 import { formatTime } from '@/util/time';
+import ThumbIcon from '@/assets/icons/ThumbIcon.vue';
+
 export default {
+  components: { ThumbIcon },
   data() {
     return {
       limit: 20,
       id: null,
       comments: [],
       text: '最新评论',
-      total: null,
+      totalComment: 0,
+      page: 1,
+      hotComments: [],
     };
   },
   mounted() {
@@ -35,27 +83,45 @@ export default {
     songComment() {
       this.$bus.$on('comment', (v) => {
         this.id = v;
-        const params = {
-          id: this.id,
-          limit: this.limit,
-        };
-        getComment(params)
-          .then((res) => {
-            this.total = res.data.total;
-            let comments = res.data.comments;
-            let list = comments.map((item) => {
-              item.url = item.user.avatarUrl;
-              item.name = item.user.nickname;
-              item.text = item.content;
-              item.tm = formatTime(item.time);
-              return item;
-            });
-            this.comments = list;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        this.getComment();
       });
+    },
+    getComment() {
+      const params = {
+        id: this.id,
+        limit: this.limit,
+        offset: (this.page - 1) * this.limit,
+      };
+      getComment(params)
+        .then((res) => {
+          this.totalComment = res.data.total;
+          let comments = res.data.comments;
+          let list = comments.map((item) => {
+            item.url = item.user.avatarUrl;
+            item.name = item.user.nickname;
+            item.text = item.content;
+            item.tm = formatTime(item.time);
+            item.like = item.likedCount;
+            return item;
+          });
+          this.comments = list;
+          this.hotComments = res.data.hotComments.map((item) => {
+            return {
+              url: item.user.avatarUrl,
+              name: item.user.nickname,
+              text: item.content,
+              tm: formatTime(item.time),
+              ...item,
+            };
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    pageChange(page) {
+      this.page = page;
+      this.getComment();
     },
   },
 };
@@ -73,6 +139,7 @@ export default {
     border-bottom: 1px solid #dadada;
     padding: 10px 0;
     display: flex;
+    color: #fff;
     &:last-child {
       border-bottom-color: transparent;
     }
@@ -85,15 +152,26 @@ export default {
   }
   .text {
     margin-left: 30px;
+    flex: 1;
     .name {
       margin-right: 10px;
       color: blue;
       cursor: pointer;
     }
-    .time {
+    .time-like {
+      display: flex;
+      justify-content: space-between;
       margin: 10px 0;
-      color: rgba(41, 40, 40, 0.815);
     }
+    .like {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .page-box {
+    text-align: center;
+    margin: 30px 0;
   }
 }
 </style>
