@@ -1,7 +1,7 @@
 <template>
   <div class="comment-box">
-    <div class="hot-comment">
-      <div class="total">热评</div>
+    <div class="hot-comment" v-if="isShow">
+      <div class="total">{{ `全部评论(${totalComment})` }}</div>
       <ul class="itemList">
         <li class="item" v-for="item in hotComments" :key="item.time">
           <img :src="item.url" class="img" />
@@ -24,7 +24,7 @@
       </ul>
     </div>
     <div class="commnets">
-      <div class="total">{{ text + '(' + totalComment + ')' }}</div>
+      <div class="total">{{ `最新评论(${totalComment})` }}</div>
       <ul class="itemList">
         <li class="item" v-for="item in comments" :key="item.time">
           <img :src="item.url" class="img" />
@@ -45,16 +45,16 @@
           </div>
         </li>
       </ul>
-    </div>
-    <div class="page-box">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="limit"
-        :total="totalComment"
-        @current-change="pageChange"
-      >
-      </el-pagination>
+      <div class="page-box">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="limit"
+          :total="totalComment"
+          @current-change="pageChange"
+        >
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -70,10 +70,10 @@ export default {
       limit: 20,
       id: null,
       comments: [],
-      text: '最新评论',
       totalComment: 0,
       page: 1,
       hotComments: [],
+      isShow: true,
     };
   },
   mounted() {
@@ -83,10 +83,10 @@ export default {
     songComment() {
       this.$bus.$on('comment', (v) => {
         this.id = v;
-        this.getComment();
+        this.getSongComment();
       });
     },
-    getComment() {
+    getSongComment() {
       const params = {
         id: this.id,
         limit: this.limit,
@@ -121,7 +121,12 @@ export default {
     },
     pageChange(page) {
       this.page = page;
-      this.getComment();
+      if (this.page === 1) {
+        this.isShow = true;
+      } else {
+        this.isShow = false;
+      }
+      this.getSongComment();
     },
   },
 };
