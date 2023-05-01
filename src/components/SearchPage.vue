@@ -185,7 +185,7 @@ export default {
 }
 .head {
   height: 80px;
-  background: #50cdcd59;
+  background: #50a1f2;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -198,9 +198,9 @@ export default {
     display: flex;
   }
   /deep/.el-input__inner {
-    background: rgba(98, 184, 184, 0.753);
+    background: #68acf0c2;
     color: white;
-    border: 1px solid rgba(149, 192, 192, 0.753);
+    border-color: #68acf0c2;
     border-radius: 20px;
     &:focus {
       outline: none;
@@ -208,6 +208,8 @@ export default {
   }
   /deep/.el-button--mini {
     margin-left: 10px;
+    background: #68acf0c2;
+    border-color: #68acf0c2;
   }
 }
 .content {
