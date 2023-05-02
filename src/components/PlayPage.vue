@@ -94,7 +94,7 @@ export default {
       singer: '',
       duration: '',
       width: 0,
-      value: 100,
+      value: Math.floor(Math.random() * 100),
       w: 0,
       isOpen: true,
       currentModel: '',
