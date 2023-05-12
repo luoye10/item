@@ -100,7 +100,7 @@ export default {
             item.url = item.user.avatarUrl;
             item.name = item.user.nickname;
             item.text = item.content;
-            item.tm = formatTime(item.time);
+            item.tm = formatTime(item.time, 'YYYY-MM-DD hh:mm:ss');
             item.like = item.likedCount;
             return item;
           });
@@ -110,7 +110,7 @@ export default {
               url: item.user.avatarUrl,
               name: item.user.nickname,
               text: item.content,
-              tm: formatTime(item.time),
+              tm: formatTime(item.time, 'YYYY-MM-DD hh:mm:ss'),
               ...item,
             };
           });
