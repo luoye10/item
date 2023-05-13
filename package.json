@@ -15,6 +15,7 @@
         "less": "^4.1.3",
         "less-loader": "^11.1.0",
         "prompt-msg": "^0.0.1",
+        "timeformatconvert": "^0.0.2",
         "vue": "^2.6.14"
     },
     "devDependencies": {

@@ -60,7 +60,8 @@
 </template>
 <script>
 import { getComment } from '@/api/index';
-import { formatTime } from '@/util/time';
+// import { timeFormat } from 'timeformatconvert';
+import { timeFormat } from '@/util/time';
 import ThumbIcon from '@/assets/icons/ThumbIcon.vue';
 
 export default {
@@ -100,7 +101,7 @@ export default {
             item.url = item.user.avatarUrl;
             item.name = item.user.nickname;
             item.text = item.content;
-            item.tm = formatTime(item.time, 'YYYY-MM-DD hh:mm:ss');
+            item.tm = timeFormat(item.time, 'YYYY-MM-DD hh:mm');
             item.like = item.likedCount;
             return item;
           });
@@ -110,7 +111,7 @@ export default {
               url: item.user.avatarUrl,
               name: item.user.nickname,
               text: item.content,
-              tm: formatTime(item.time, 'YYYY-MM-DD hh:mm:ss'),
+              tm: timeFormat(item.time, 'YYYY-MM-DD hh:mm'),
               ...item,
             };
           });
@@ -141,10 +142,9 @@ export default {
     margin-bottom: 10px;
   }
   .item {
-    border-bottom: 1px solid #dadada;
+    border-bottom: 1px solid #909399;
     padding: 10px 0;
     display: flex;
-    color: #fff;
     &:last-child {
       border-bottom-color: transparent;
     }
@@ -160,13 +160,14 @@ export default {
     flex: 1;
     .name {
       margin-right: 10px;
-      color: blue;
+      color: #409eff;
       cursor: pointer;
     }
     .time-like {
       display: flex;
       justify-content: space-between;
       margin: 10px 0;
+      color: #f2f6fc;
     }
     .like {
       display: flex;

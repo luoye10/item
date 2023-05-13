@@ -21,22 +21,28 @@ const format = time => {
     return m + ':' + s;
 };
 
-const formatTime = (paramTime, format) => {
+const timeFormat = (paramTime, format) => {
     const date = new Date(paramTime);
     const y = date.getFullYear();
     const m = date.getMonth() + 1;
     const d = date.getDate();
     const h = date.getHours();
     const M = date.getMinutes();
-    const s = date.getSeconds();
-    day(paramTime);
+    let result = day(paramTime);
+    if (result) {
+        if (result === 'today') {
+            return `${addCharacter(h)}:${addCharacter(M)}`;
+        }
+        if (result === 'yesterday') {
+            return `昨天 ${addCharacter(h)}:${addCharacter(M)}`;
+        }
+    }
     let list = {
         YYYY: y,
         MM: addCharacter(m),
         DD: addCharacter(d),
         hh: addCharacter(h),
-        mm: addCharacter(M),
-        ss: addCharacter(s)
+        mm: addCharacter(M)
     };
     for (let key in list) {
         format = format.replace(key, list[key]);
@@ -51,30 +57,34 @@ function day(param) {
     const d = date.getDate();
     const h = date.getHours();
     const M = date.getMinutes();
-    const s = date.getSeconds();
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1;
     const today = new Date().getDate();
     if (year === y && month === m && today === d) {
-        return `${h}:${M}:${s}`;
+        return 'today';
     }
     if (year === y && month === m && today - d === 1) {
-        return `昨天 ${h}:${M}:${s}`;
+        return 'yesterday';
     }
-    if (year === y && month - m === 1 && today === 1) {
-        return `昨天 ${h}:${M}:${s}`;
+    if (year === y && month - m === 1 && today === 1 && d === getDays(y, m)) {
+        return 'yesterday';
     }
-    if (year - y === 1 && m - month === 11 && today === 1) {
-        return `昨天 ${h}:${M}:${s}`;
+    if (year - y === 1 && m - month === 11 && d - today === 30) {
+        return 'yesterday';
     }
+    return '';
 }
 
 function addCharacter(v) {
     return (v + '').padStart(2, '0');
 }
 
+function getDays(year, month) {
+    return new Date(year, month, 0).getDate();
+}
+
 module.exports = {
     timeHandle,
     format,
-    formatTime
+    timeFormat
 };
