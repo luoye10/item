@@ -60,8 +60,8 @@
 </template>
 <script>
 import { getComment } from '@/api/index';
-// import { timeFormat } from 'timeformatconvert';
-import { timeFormat } from '@/util/time';
+import { timeFormat } from 'base-time';
+// import { timeFormat } from '@/util/time';
 import ThumbIcon from '@/assets/icons/ThumbIcon.vue';
 
 export default {
