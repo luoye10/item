@@ -1,5 +1,5 @@
 <template>
-  <div class="holder">
+  <div class="lyric-box">
     <div class="item-box" ref="boxEl">
       <ul class="itemList">
         <li
@@ -88,7 +88,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.holder {
+.lyric-box {
   margin-top: 80px;
   backdrop-filter: blur(5px);
   overflow: auto;
