@@ -16,32 +16,44 @@
       </div>
     </div>
     <div class="content" v-show="display">
-      <div class="song-sheet">
-        <div class="playList">
-          <div class="playList-head" @click="spread">
-            <span>创建的歌单</span>
-            <span>
-              <i class="el-icon-caret-bottom" v-if="isSpread"></i>
-              <i class="el-icon-caret-right" v-else></i>
-            </span>
+      <div class="theme">
+        <div class="song-sheet">
+          <div class="playList">
+            <div class="playList-head" @click="spread">
+              <span>创建的歌单</span>
+              <span>
+                <i class="el-icon-caret-bottom" v-if="isSpread"></i>
+                <i class="el-icon-caret-right" v-else></i>
+              </span>
+            </div>
+            <div class="add" @click="pop">
+              <i class="el-icon-plus"></i>
+            </div>
           </div>
-          <div class="add" @click="pop">
-            <i class="el-icon-plus"></i>
-          </div>
+          <ul class="sheets" v-show="isSpread">
+            <li
+              v-for="item in songSheet"
+              :class="['sheet', { active: title === item.title }]"
+              :key="item.title"
+              @click.stop="showList(item.title)"
+            >
+              <heart-icon v-if="item.isAdd"></heart-icon>
+              <div class="name">{{ item.name }}</div>
+            </li>
+          </ul>
         </div>
-        <ul class="sheets" v-show="isSpread">
-          <li
-            v-for="item in songSheet"
-            :class="['sheet', { active: title === item.title }]"
-            :key="item.title"
-            @click.stop="showList(item.title)"
-          >
-            <heart-icon v-if="item.isAdd"></heart-icon>
-            <div class="name">{{ item.name }}</div>
-          </li>
-        </ul>
+        <div
+          :class="['collect', { active: text === title }]"
+          @click="showCollect"
+        >
+          <user-heart class="icon"></user-heart>
+          <div class="text">{{ text }}</div>
+        </div>
       </div>
-      <song-page :songs="songs" v-show="isShow" class="songs"></song-page>
+      <div class="show-area">
+        <song-page :songs="songs" v-if="isShow"></song-page>
+        <singer-page v-else></singer-page>
+      </div>
     </div>
     <div class="box" v-show="isPop">
       <div class="star" @click="hide">×</div>
@@ -77,12 +89,16 @@ import SongPage from './SongPage.vue';
 import { getValue, setValue, getListValue, listKey } from '@/util/saveAndGet';
 import { randomStr } from '@/util/random';
 import { success } from '@/util/message';
+import UserHeart from '@/assets/icons/UserHeart.vue';
+import SingerPage from './SingerPage.vue';
 export default {
   components: {
     SongPage,
     PlayPage,
     LyricPage,
     HeartIcon,
+    UserHeart,
+    SingerPage,
   },
   data() {
     return {
@@ -100,6 +116,7 @@ export default {
       obj: {},
       isPrompt: false,
       title: '',
+      text: '我的收藏',
     };
   },
   mounted() {
@@ -109,7 +126,6 @@ export default {
   },
   methods: {
     startSearch() {
-      this.isOpen = false;
       search(this.word)
         .then((res) => {
           this.songs = res.data.result.songs;
@@ -169,6 +185,10 @@ export default {
         this.songs = list;
       }
     },
+    showCollect() {
+      this.title = this.text;
+      this.isShow = !this.isShow;
+    },
   },
   watch: {
     name() {
@@ -216,7 +236,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-  .song-sheet {
+  .theme {
     position: fixed;
     top: 80px;
     left: 0;
@@ -224,39 +244,53 @@ export default {
     width: 200px;
     background: white;
     border-right: 2px solid #dadada;
-    .playList {
-      height: 30px;
-      line-height: 30px;
-      padding: 0 20px;
-      display: flex;
-      justify-content: space-around;
+    padding: 0 20px;
+  }
+  .playList {
+    height: 30px;
+    line-height: 30px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .playList-head {
+    flex: 1;
+    cursor: pointer;
+  }
+  .add {
+    width: 20px;
+    cursor: pointer;
+  }
+  .sheet {
+    height: 40px;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      background: #ede1e1;
     }
-    .playList-head {
-      flex: 1;
-      cursor: pointer;
+    .name {
+      margin-left: 10px;
     }
-    .add {
-      width: 20px;
-      cursor: pointer;
+  }
+  .collect {
+    height: 40px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    &:hover {
+      background: #ede1e1;
     }
-    .sheet {
-      height: 40px;
-      padding-left: 20px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      &:hover {
-        background: #ede1e1;
-      }
-      .name {
-        margin-left: 10px;
-      }
+    .icon {
+      font-size: 20px;
+      margin-right: 10px;
     }
   }
   .active {
     background: #ede1e1;
   }
-  .songs {
+  .show-area {
     flex: 1;
   }
 }
